@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jhn233 的个人主页 · jhn233.dpdns.org</title>
+<meta name="description" content="jhn233 的个人主页：关于我、经历、项目与联系方式。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2318202E'/><circle cx='14' cy='16' r='6' fill='none' stroke='%23E4572E' stroke-width='2.5'/><circle cx='21' cy='21' r='2.5' fill='%23E4572E'/></svg>">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* ===== 设计令牌 ===== */
+:root{
+  --paper:#F7F8FA;
+  --ink:#18202E;
+  --muted:#5B6472;
+  --line:#DCE1E8;
+  --accent:#E4572E;
+  --on-accent:#FFFFFF;
+  --card:#FFFFFF;
+  --serif:"Noto Serif SC","Songti SC",serif;
+  --sans:"Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --container:1080px;
+  --nav-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+img{max-width:100%;display:block}
+.container{max-width:var(--container);margin:0 auto;padding-inline:1.5rem}
+section{scroll-margin-top:calc(var(--nav-h) + 18px)}
+
+/* ===== 导航 ===== */
+.site-nav{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line)}
+.site-nav .container{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;min-height:var(--nav-h);padding-block:.5rem}
+.brand{font-family:var(--serif);font-weight:900;font-size:1.15rem;color:var(--ink);letter-spacing:.02em}
+.nav-links{display:flex;gap:1.25rem;list-style:none;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:.95rem;padding:.2rem 0}
+.nav-links a:hover{color:var(--ink);text-decoration:none}
+.nav-links a.active{color:var(--accent)}
+
+/* ===== Hero ===== */
+.hero{position:relative;overflow:hidden;padding-block:clamp(4.5rem,12vw,8rem) clamp(3rem,8vw,5rem)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.13;pointer-events:none}
+.hero .container{position:relative;animation:rise .7s ease both}
+.hero-domain{display:flex;align-items:center;gap:.55rem;font-size:.92rem;color:var(--muted);margin-bottom:1.6rem}
+.hero-domain::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.18;letter-spacing:.01em}
+.hero .tagline{margin-top:1.3rem;font-size:clamp(1.05rem,2.6vw,1.3rem);font-weight:500}
+.hero .intro{margin-top:.9rem;max-width:58ch;color:var(--muted)}
+.hero-actions{margin-top:2.1rem;display:flex;gap:1rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.68rem 1.5rem;border-radius:8px;font-weight:500;font-size:.98rem;transition:background .2s,color .2s}
+.btn:hover{text-decoration:none}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:#C14422}
+.btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ===== 通用区块 ===== */
+.sec{padding-block:clamp(3.5rem,9vw,5.5rem)}
+.sec-head{margin-bottom:2.4rem}
+.sec-head::before{content:"";display:block;width:44px;height:4px;border-radius:2px;background:var(--accent);margin-bottom:1.1rem}
+.sec-head h2{font-family:var(--serif);font-weight:900;font-size:clamp(1.6rem,4vw,2.1rem);letter-spacing:.01em}
+.sec-desc{color:var(--muted);margin-top:.8rem;max-width:62ch}
+
+/* ===== 关于我 ===== */
+.about-grid{display:grid;gap:2.5rem}
+@media(min-width:768px){.about-grid{grid-template-columns:1fr 1fr;gap:3.5rem}}
+.about-prose p{color:var(--muted);max-width:60ch}
+.about-prose p+p{margin-top:1rem}
+.about-prose p:first-child{color:var(--ink)}
+.info-list{list-style:none;border-top:1px solid var(--line)}
+.info-list li{display:flex;justify-content:space-between;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--line);font-size:.98rem}
+.info-list .k{color:var(--muted);flex:none}
+.info-list .v{text-align:right;font-weight:500;word-break:break-all}
+
+/* ===== 经历时间轴 ===== */
+.timeline{--date:7rem;--axis:1.6rem;--gap:.9rem;position:relative;display:grid;grid-template-columns:var(--date) var(--axis) 1fr;column-gap:var(--gap);row-gap:2.4rem;padding-top:.4rem}
+.timeline::before{content:"";position:absolute;left:calc(var(--date) + var(--gap) + var(--axis)/2 - 1px);top:.5rem;bottom:.5rem;width:2px;background:var(--line)}
+.tl-item{display:contents}
+.tl-time{padding-top:.35rem;text-align:right;color:var(--muted);font-size:.95rem}
+.tl-dot{justify-self:center;align-self:start;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--paper);box-shadow:0 0 0 1px var(--accent);margin-top:.42rem;position:relative;z-index:1}
+.tl-title{font-weight:700}
+.tl-desc{color:var(--muted);font-size:.95rem;margin-top:.2rem}
+@media(max-width:560px){.timeline{--date:5.5rem}}
+
+/* ===== 项目 ===== */
+.project-grid{display:grid;gap:1.25rem}
+@media(min-width:900px){.project-grid{grid-template-columns:repeat(3,1fr)}}
+.project-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.5rem;display:flex;flex-direction:column;gap:.55rem}
+.project-card h3{font-family:var(--serif);font-weight:700;font-size:1.15rem}
+.project-card p{color:var(--muted);font-size:.95rem;flex:1}
+.p-tags{display:flex;gap:.5rem;flex-wrap:wrap}
+.p-tags span{font-size:.8rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.14rem .75rem;background:var(--paper)}
+
+/* ===== 技能 ===== */
+.skill-list{display:flex;flex-wrap:wrap;gap:.75rem;list-style:none}
+.chip{display:inline-flex;align-items:center;gap:.55rem;border:1px solid var(--line);border-radius:999px;padding:.42rem 1.05rem;background:var(--card);font-size:.95rem}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+
+/* ===== 联系 ===== */
+.contact-box{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:clamp(2rem,6vw,3.2rem);text-align:center}
+.contact-mail{font-family:var(--serif);font-weight:900;font-size:clamp(1.2rem,3.5vw,1.8rem);color:var(--ink);word-break:break-all;display:inline-block}
+.contact-mail:hover{color:var(--accent);text-decoration:none}
+.contact-sub{margin-top:1.2rem;color:var(--muted);display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;font-size:.98rem}
+.contact-sub a{color:var(--accent)}
+
+/* ===== 页脚 ===== */
+.site-footer{border-top:1px solid var(--line);padding-block:2rem;text-align:center;color:var(--muted);font-size:.9rem}
+.site-footer a{color:var(--muted);text-decoration:underline}
+
+/* ===== 无障碍 & 动效克制 ===== */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 视图：导航 ===== -->
+<header class="site-nav">
+  <div class="container">
+    <a class="brand" href="#hero">jhn233</a>
+    <nav aria-label="站内导航">
+      <ul class="nav-links">
+        <li><a href="#about">关于</a></li>
+        <li><a href="#timeline">经历</a></li>
+        <li><a href="#projects">项目</a></li>
+        <li><a href="#skills">技能</a></li>
+        <li><a href="#contact">联系</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== 视图：Hero ===== -->
+  <section id="hero" class="hero">
+    <div class="container">
+      <p class="hero-domain">jhn233.dpdns.org</p>
+      <h1>你好，我是<br>［你的名字］</h1>
+      <p class="tagline">［一句话介绍：你的身份与正在做的事］</p>
+      <p class="intro">［这里写两到三句自我介绍：你是什么背景、关注什么领域、最近在忙什么。可以提到专业方向、兴趣爱好或正在进行中的项目。］</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects">看看我的项目</a>
+        <a class="btn btn-ghost" href="#contact">联系我</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 视图：关于我 ===== -->
+  <section id="about" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <h2>关于我</h2>
+        <p class="sec-desc">［用一小段话介绍你自己：教育背景、兴趣方向、想成为什么样的人。以下基本信息同样可以在源码中替换。］</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-prose">
+          <p>［第一段：介绍你的基本情况，比如学校和专业方向，或者你正在学习、钻研的领域。］</p>
+          <p>［第二段：介绍你的兴趣和正在做的事，比如参与的项目、比赛、社团活动，或者日常的爱好。］</p>
+        </div>
+        <ul class="info-list">
+          <li><span class="k">坐标</span><span class="v">［城市］</span></li>
+          <li><span class="k">学校</span><span class="v">［学校名称］</span></li>
+          <li><span class="k">专业</span><span class="v">［专业名称］</span></li>
+          <li><span class="k">邮箱</span><span class="v">［you@example.com］</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 视图：经历 ===== -->
+  <section id="timeline" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <h2>经历</h2>
+        <p class="sec-desc">［按时间顺序整理你的关键节点：入学、项目、比赛、实习、求职等。以下为示例，请替换为真实经历。］</p>
+      </div>
+      <ol class="timeline">
+        <li class="tl-item">
+          <span class="tl-time">2022</span>
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <p class="tl-title">［示例：进入大学］</p>
+            <p class="tl-desc">［示例：开始学习专业课程，接触编程。］</p>
+          </div>
+        </li>
+        <li class="tl-item">
+          <span class="tl-time">2023</span>
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <p class="tl-title">［示例：完成第一个项目］</p>
+            <p class="tl-desc">［示例：第一次把想法做成可以运行的东西。］</p>
+          </div>
+        </li>
+        <li class="tl-item">
+          <span class="tl-time">2024</span>
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <p class="tl-title">［示例：参加竞赛 / 实习］</p>
+            <p class="tl-desc">［示例：在真实场景中锻炼自己的能力。］</p>
+          </div>
+        </li>
+        <li class="tl-item">
+          <span class="tl-time">2025</span>
+          <span class="tl-dot"></span>
+          <div class="tl-body">
+            <p class="tl-title">［示例：考研 / 求职准备］</p>
+            <p class="tl-desc">［示例：为下一个阶段做规划。］</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== 视图：项目 ===== -->
+  <section id="projects" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <h2>项目</h2>
+        <p class="sec-desc">［挑几个你最有代表性的项目展示。以下为占位示例。］</p>
+      </div>
+      <div class="project-grid">
+        <article class="project-card">
+          <h3>［项目一：占位名称］</h3>
+          <p>［一句话说明这个项目做了什么、解决什么问题。］</p>
+          <div class="p-tags"><span>Web</span><span>Python</span></div>
+        </article>
+        <article class="project-card">
+          <h3>［项目二：占位名称］</h3>
+          <p>［一句话说明这个项目做了什么、解决什么问题。］</p>
+          <div class="p-tags"><span>数据分析</span><span>Python</span></div>
+        </article>
+        <article class="project-card">
+          <h3>［项目三：占位名称］</h3>
+          <p>［一句话说明这个项目做了什么、解决什么问题。］</p>
+          <div class="p-tags"><span>硬件</span><span>C/C++</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 视图：技能 ===== -->
+  <section id="skills" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <h2>技能与兴趣</h2>
+        <p class="sec-desc">［列出你熟悉的工具、语言与兴趣领域。以下为示例标签。］</p>
+      </div>
+      <ul class="skill-list">
+        <li class="chip">Python</li>
+        <li class="chip">C/C++</li>
+        <li class="chip">机械设计</li>
+        <li class="chip">数据分析</li>
+        <li class="chip">Web 前端</li>
+        <li class="chip">Git</li>
+        <li class="chip">3D 建模</li>
+        <li class="chip">英语</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 视图：联系 ===== -->
+  <section id="contact" class="sec">
+    <div class="container">
+      <div class="sec-head">
+        <h2>联系我</h2>
+      </div>
+      <div class="contact-box">
+        <a class="contact-mail" href="mailto:you@example.com">［you@example.com］</a>
+        <div class="contact-sub">
+          <span>GitHub：<a href="https://github.com/" target="_blank" rel="noopener">［你的用户名］</a></span>
+          <span>本站：jhn233.dpdns.org</span>
+        </div>
+        <p class="sec-desc" style="margin:1.2rem auto 0">［替换邮箱、GitHub 链接为你的真实信息。］</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    © <span id="year"></span> ［你的名字］ · <a href="#hero">jhn233.dpdns.org</a> · 托管于 GitHub Pages
+  </div>
+</footer>
+
+<script>
+// 导航高亮 & 年份
+var links = document.querySelectorAll('.nav-links a');
+var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+var io = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      links.forEach(function(l){ l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id); });
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sections.forEach(function(s){ io.observe(s); });
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
