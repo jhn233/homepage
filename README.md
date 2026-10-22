@@ -1,37 +1,26 @@
 # jhn233 个人主页
 
-个人主页站点，部署于 GitHub Pages，绑定域名 `jhn233.dpdns.org`。
+个人主页与实验解析网页版，部署于 GitHub Pages。
+
+- 主页：https://jhn233.github.io/homepage/
+- 实验解析：https://jhn233.github.io/homepage/experimentlab/
 
 ## 本地预览
 
-直接用浏览器打开 `index.html` 即可预览。
-
-## 如何替换内容
-
-页面中所有用 `［ ］` 包裹的文字都是占位内容，用真实信息替换即可：
-
-- 姓名、一句话介绍、自我介绍 → `index.html` 的 hero 与「关于我」区块
-- 基本信息（坐标 / 学校 / 专业 / 邮箱）→「关于我」右侧列表
-- 经历时间轴 →「经历」区块的 4 个示例条目
-- 项目卡片 →「项目」区块的 3 张卡片
-- 技能标签 →「技能与兴趣」区块
-- 邮箱、GitHub 链接 →「联系我」区块（`mailto:` 与 `https://github.com/` 两处）
-
-## 部署到 GitHub Pages
-
-1. 在 GitHub 新建仓库（公开仓库），把本目录下的 `index.html`、`README.md`、`CNAME` 上传到仓库根目录。
-2. 仓库 **Settings → Pages**，Source 选择 **Deploy from a branch**，分支选 `main`，目录选 `/ (root)`，保存。
-3. 等待几分钟，站点会先以 `https://<你的用户名>.github.io/<仓库名>/` 上线。
-4. 绑定自定义域名：**Settings → Pages → Custom domain** 填入 `jhn233.dpdns.org` 并保存。
-5. 在域名服务商处为 `jhn233.dpdns.org` 添加一条 **CNAME** 记录，指向 `<你的用户名>.github.io`。
-
-> 注意：`CNAME` 文件已包含 `jhn233.dpdns.org`。如果该域名由 DDNS 服务商托管且不支持自定义 DNS 解析，则无法绑定到 GitHub Pages，站点将以默认的 `<用户名>.github.io` 地址访问。
+在仓库根目录运行 `python3 -m http.server 5188`，打开 `http://localhost:5188/`。实验解析使用 JavaScript 模块，需要通过 HTTP 服务预览。
 
 ## 实验解析 ExperimentLab
 
-- 主页「项目」区已加入实验解析入口。
-- 网页文件位于 `experimentlab/`，与主页一并部署；不需要额外构建步骤。
-- 功能包括 CSV / TXT / TSV 导入与编辑、六种拟合公式、九组示例、异常值标记、SVG 图表与报告导出、浏览器打印保存 PDF。
-- 数据与计算保存在当前浏览器中，未加入数据上传接口。重要记录请导出 CSV。
-- 本地预览整个网站：`python3 -m http.server 5188`，打开 `http://localhost:5188/experimentlab/`。
-- 更换域名不会影响相对链接；已有 Sites 地址下的本地记录需要先导出，再导入此网站。
+主页「项目」区提供实验解析入口，网页文件位于 `experimentlab/`，无需构建或后端。
+
+- CSV / TXT / TSV 导入、粘贴和手动编辑，可选择 X / Y 列。
+- 线性、2–5 次多项式、指数、对数、幂函数、倒数共六种模型，以及九组示例数据。
+- 异常值标记、SVG 图表下载、CSV 导出、完整 HTML 报告与浏览器打印保存 PDF。
+- 数据与计算均在当前浏览器中处理，localStorage 自动保存，未加入数据上传接口。重要记录请及时导出 CSV。
+- 从 Sites 地址迁移时，请先导出 CSV，再导入新地址。不同网站来源下的本地记录相互隔离。
+
+## 发布与维护
+
+GitHub 仓库 Settings → Pages 已设置为 Deploy from a branch，分支 `main`、目录 `/ (root)`。更新此分支中的主页或 `experimentlab/` 文件后会自动发布。主页中用「［ ］」标记的个人信息与其他项目仍为待填写的占位内容。
+
+原配置中的自定义域名 `jhn233.dpdns.org` 存在 DNS / HTTPS 配置问题，因此目前使用 GitHub 默认 HTTPS 地址。若以后需要重新绑定，请先按 GitHub Pages 文档配置域名 DNS，再到 Pages 设置中保存 Custom domain。
