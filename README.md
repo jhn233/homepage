@@ -26,3 +26,12 @@
 5. 在域名服务商处为 `jhn233.dpdns.org` 添加一条 **CNAME** 记录，指向 `<你的用户名>.github.io`。
 
 > 注意：`CNAME` 文件已包含 `jhn233.dpdns.org`。如果该域名由 DDNS 服务商托管且不支持自定义 DNS 解析，则无法绑定到 GitHub Pages，站点将以默认的 `<用户名>.github.io` 地址访问。
+
+## 实验解析 ExperimentLab
+
+- 主页「项目」区已加入实验解析入口。
+- 网页文件位于 `experimentlab/`，与主页一并部署；不需要额外构建步骤。
+- 功能包括 CSV / TXT / TSV 导入与编辑、六种拟合公式、九组示例、异常值标记、SVG 图表与报告导出、浏览器打印保存 PDF。
+- 数据与计算保存在当前浏览器中，未加入数据上传接口。重要记录请导出 CSV。
+- 本地预览整个网站：`python3 -m http.server 5188`，打开 `http://localhost:5188/experimentlab/`。
+- 更换域名不会影响相对链接；已有 Sites 地址下的本地记录需要先导出，再导入此网站。

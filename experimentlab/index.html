@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b33"><meta name="description" content="实验解析网页版：导入与编辑实验数据，使用六种公式拟合，导出图表与实验报告。数据在浏览器本地处理。">
+  <title>实验解析 · ExperimentLab</title>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg"><link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true"><defs>
+    <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 10a1.4 1.4 0 0 0 1.2 2h13.6a1.4 1.4 0 0 0 1.2-2L14 9V3M8 14h8M9 17h.01M14 18h.01"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M7 14l4-5 4 3 5-8"/><circle cx="11" cy="9" r="1"/><circle cx="15" cy="12" r="1"/></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3M7 8l5-5 5 5M4 15v5h16v-5"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13M7 11l5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H4v13h4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4 2c-1.5 1-1.5 1-1.5 3M12 17h.01"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 5 4 10l5 5M4 10h9a6 6 0 0 1 0 12"/></symbol>
+  </defs></svg>
+  <aside class="rail" aria-label="快捷操作">
+    <a class="brand-symbol" href="#" aria-label="实验解析首页"><svg><use href="#i-flask"/></svg></a>
+    <div class="rail-line"></div>
+    <button class="rail-btn active" data-page="workspace" aria-label="分析工作台" title="分析工作台"><svg><use href="#i-chart"/></svg></button>
+    <button class="rail-btn" data-page="data" aria-label="完整数据表" title="完整数据表"><svg><use href="#i-table"/></svg></button>
+    <button class="rail-btn" data-page="report" aria-label="实验报告" title="实验报告"><svg><use href="#i-file"/></svg></button>
+    <button class="rail-btn help-bottom" data-action="help" aria-label="使用帮助" title="使用帮助"><svg><use href="#i-help"/></svg></button>
+    <span class="rail-version">WEB<br>01</span>
+  </aside>
+  <div class="shell">
+    <header class="topbar">
+      <a href="#" class="wordmark">实验解析<span>ExperimentLab</span></a>
+      <nav class="topnav" aria-label="主导航"><button data-page="workspace" class="active">工作台</button><button data-page="data">数据表</button><button data-page="report">实验报告</button></nav>
+      <div class="save-status" id="save-status"><span></span>本地已保存</div>
+    </header>
+    <main>
+      <section class="page-intro">
+        <div><div class="eyebrow"><span class="mini-line"></span> YOUR BROWSER IS A LAB</div><h1 id="page-title">从数据，找到规律<span>。</span></h1><p id="page-subtitle">记录每一次观察，让实验结论有迹可循。</p></div>
+        <div class="intro-actions"><button class="button secondary" data-action="demos"><svg><use href="#i-spark"/></svg>试试示例</button><button class="button primary" data-action="import"><svg><use href="#i-upload"/></svg>导入数据</button></div>
+      </section>
+      <div class="workflow" aria-label="实验流程"><span><b>01</b> 整理数据</span><i></i><span><b>02</b> 选择公式</span><i></i><span><b>03</b> 读懂结果</span><i></i><span><b>04</b> 导出报告</span><div class="workflow-note"><svg><use href="#i-lock"/></svg>数据留在你的浏览器</div></div>
+      <section id="workspace-page" class="page">
+        <div class="work-grid">
+          <section class="card data-card">
+            <div class="card-heading"><div class="section-label"><span class="section-dot"></span>实验数据 <span class="count-badge" id="row-count">10</span></div><button class="icon-button" data-action="paste" aria-label="粘贴数据" title="粘贴数据"><svg><use href="#i-copy"/></svg></button></div>
+            <div class="data-source"><span id="source-name"></span><button class="text-button" data-action="demos">切换示例 <span>↗</span></button></div>
+            <div class="axis-pickers"><label>X 轴<select id="x-column" aria-label="X 轴数据列"></select></label><label>Y 轴<select id="y-column" aria-label="Y 轴数据列"></select></label></div>
+            <div id="compact-table" class="table-wrap compact-table"></div>
+            <div class="data-footer"><button class="text-button" data-action="add"><svg><use href="#i-plus"/></svg>添加一行</button><button class="text-button subtle" data-page="data">完整数据表 ↗</button></div>
+            <div class="import-tip" id="import-tip">点击数值即可修改，结果会自动更新。</div>
+          </section>
+          <section class="card chart-card">
+            <div class="card-heading chart-heading"><div><div class="section-label"><span class="section-dot teal"></span>拟合与观测</div><span class="chart-subtitle" id="chart-subtitle">线性拟合 / LINEAR REGRESSION</span></div><button class="button small secondary" data-action="export-chart"><svg><use href="#i-download"/></svg>导出图表</button></div>
+            <div id="chart-container" class="chart-container" aria-live="polite"></div>
+            <div class="chart-legend"><span><i class="legend-point"></i>观测数据</span><span><i class="legend-line"></i>拟合曲线</span><span id="outlier-legend" hidden><i class="legend-point orange"></i>异常点</span><span class="chart-range">仅在观测区间绘制</span></div>
+            <div class="results" id="metrics"></div>
+          </section>
+        </div>
+        <section class="card model-card">
+          <div class="model-top"><div class="section-label"><span class="section-dot"></span>选择拟合模型</div><div class="filter-control"><label for="outlier-method">异常值处理</label><select id="outlier-method"><option value="off">保留全部数据</option><option value="iqr">Y 值 IQR 标记</option><option value="sigma">3σ 线性残差标记</option></select></div></div>
+          <div id="model-options" class="model-options" role="group" aria-label="拟合公式"></div>
+          <div class="equation-row"><div><span class="equation-label">拟合方程</span><div id="equation" class="equation"></div></div><div id="degree-control" class="degree-control" hidden><label for="degree">多项式次数</label><select id="degree"><option value="2">2 次</option><option value="3">3 次</option><option value="4">4 次</option><option value="5">5 次</option></select></div><button class="button primary" data-page="report">生成实验报告 <svg><use href="#i-arrow"/></svg></button></div>
+          <p id="fit-note" class="fit-note"></p>
+        </section>
+      </section>
+      <section id="data-page" class="page" hidden><div class="card full-data-card"><div class="card-heading"><div class="section-label"><span class="section-dot"></span>完整原始记录 <span id="full-count" class="count-badge"></span></div><div class="button-group"><button class="button secondary small" data-action="paste">粘贴文本</button><button class="button secondary small" data-action="export-csv"><svg><use href="#i-download"/></svg>CSV</button><button class="button primary small" data-action="add"><svg><use href="#i-plus"/></svg>添加一行</button></div></div><p class="data-description">修改列名与数值，自动保存到当前浏览器。异常点只标记，不会从原始数据中删除。</p><div id="full-table" class="table-wrap full-table"></div><div class="data-footer"><span id="full-source"></span><button class="text-button" data-action="undo"><svg><use href="#i-undo"/></svg>撤销上一步</button></div></div><div class="data-page-footer"><button class="button secondary" data-action="manual">新建空白数据表</button><button class="button primary" data-page="workspace">查看拟合结果 <svg><use href="#i-arrow"/></svg></button></div></section>
+      <section id="report-page" class="page" hidden><div class="report-layout"><aside class="card report-settings"><div class="section-label"><span class="section-dot"></span>报告设置</div><label>实验标题<input id="report-title" maxlength="100" placeholder="例如：伏安特性实验"></label><label>实验者<input id="report-author" maxlength="80" placeholder="填写姓名（选填）"></label><label>实验日期<input id="report-date" type="date"></label><label>实验目的与条件<textarea id="report-context" rows="4" maxlength="4000" placeholder="补充实验目的、仪器、环境条件等。"></textarea></label><label>讨论与结论<textarea id="report-discussion" rows="4" maxlength="4000" placeholder="结合理论值、误差来源与实验观察，补充你的结论。"></textarea></label><button class="button primary" data-action="print"><svg><use href="#i-file"/></svg>打印 / 保存 PDF</button><button class="button secondary" data-action="export-report"><svg><use href="#i-download"/></svg>下载报告 HTML</button><p class="settings-note">打印窗口中选择“存储为 PDF”。报告包含全部原始数据，不会上传你的记录。</p></aside><div id="report-preview" class="report-paper"></div></div></section>
+      <footer class="page-footer"><span><svg><use href="#i-flask"/></svg>EXPERIMENTLAB <span class="footer-divider">/</span> 为每一次好奇提供工具</span><button class="text-button" data-action="help">使用说明与隐私</button></footer>
+    </main>
+  </div>
+  <input id="file-input" type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" hidden>
+  <dialog id="paste-dialog" class="modal"><form id="paste-form"><div class="modal-heading"><div><div class="eyebrow">IMPORT DATA</div><h2>粘贴你的实验记录</h2></div><button class="icon-button" type="button" data-close aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><p>支持逗号、分号、Tab 或空格分列；第一行可以是列名。</p><textarea id="paste-input" rows="10" spellcheck="false" placeholder="时间 (s),位移 (m)&#10;0.1,0.049&#10;0.2,0.196&#10;0.3,0.441" aria-label="待导入的数据"></textarea><p id="paste-error" class="inline-error" role="alert"></p><div class="modal-footer"><span>导入后可撤销，恢复之前的数据</span><button class="button primary" type="submit">解析并导入 <svg><use href="#i-arrow"/></svg></button></div></form></dialog>
+  <dialog id="demo-dialog" class="modal demo-modal"><div class="modal-heading"><div><div class="eyebrow">A LITTLE INSPIRATION</div><h2>从一个熟悉的实验开始</h2></div><button class="icon-button" data-close aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><p>9 组演示数据，加载后自动选择合适的拟合公式。均为合成数据，不是真实测量。</p><div id="demo-options" class="demo-options"></div></dialog>
+  <dialog id="help-dialog" class="modal help-modal"><div class="modal-heading"><h2>让数据告诉你更多</h2><button class="icon-button" data-close aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><div class="help-content"><h3>1. 导入与核对</h3><p>导入 CSV / TXT / TSV、粘贴表格，或在数据表中手动录入。XLS / XLSX 请先另存为 CSV。空单元格、非数值与列数不符的行会跳过并提示。</p><h3>2. 选择公式</h3><p>支持线性、2–5 次多项式、指数、对数、幂函数和倒数模型。对数要求 X > 0；指数要求 Y > 0；幂函数要求 X、Y > 0；倒数要求 X ≠ 0。</p><p>指数与幂函数通过对 ln(Y) 做最小二乘得到结果，R² 和残差标准偏差按原始 Y 计算。3σ 以线性残差为依据，IQR 基于 Y 值；异常标记需要结合实验判断。</p><h3>3. 带走你的成果</h3><p>导出 SVG 图表、CSV 原始数据、HTML 报告，或使用浏览器打印保存 PDF。报告包含全部数据；请补充实验条件与结论。R² 和残差不能替代测量不确定度分析。</p><h3>本地数据与隐私</h3><p>表格、计算和报告在当前浏览器中处理，使用 localStorage 保存当前会话。网页没有数据上传接口。清除浏览器数据、使用隐私模式或换设备可能丢失记录，请及时导出 CSV。网页不包含 iOS 版的相机 OCR。</p><p>使用手机浏览器的“添加到主屏幕”可以像 App 一样打开。数据仅保存在当前设备和当前网站地址下。</p></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body></html>
