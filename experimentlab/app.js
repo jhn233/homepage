@@ -161,7 +161,7 @@ function exportCSV(){
 async function exportReport(){
   renderReport();
   try{
-    const response=await fetch('./style.css?v=5');if(!response.ok)throw Error();const css=await response.text();
+    const response=await fetch('./style.css?v=6');if(!response.ok)throw Error();const css=await response.text();
     downloadFile(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(state.report.title||'实验报告')}</title><style>${css}\nbody{padding:25px;background:#f5f7f4}.report-paper{max-width:900px;margin:0 auto}@media print{body{padding:0}}</style><article class="report-paper">${$('report-preview').innerHTML}</article></html>`,'实验解析-实验报告.html','text/html;charset=utf-8');toast('报告已下载，打开文件即可阅读或打印成 PDF。');
   }catch{toast('报告样式读取失败，请使用“打印 / 保存 PDF”。');}
 }

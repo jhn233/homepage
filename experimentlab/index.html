@@ -5,7 +5,7 @@
   <meta name="theme-color" content="#102b33"><meta name="description" content="实验解析网页版：导入与编辑实验数据，使用六种公式拟合，导出图表与实验报告。数据在浏览器本地处理。">
   <title>实验解析 · ExperimentLab</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg"><link rel="apple-touch-icon" href="./icon.svg">
-  <link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css?v=5">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
   <div class="glass-ambient" aria-hidden="true"></div>
@@ -96,5 +96,5 @@
   <dialog id="demo-dialog" class="modal demo-modal"><div class="modal-heading"><div><div class="eyebrow">A LITTLE INSPIRATION</div><h2>从一个熟悉的实验开始</h2></div><button class="icon-button" data-close aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><p>9 组演示数据，加载后自动选择合适的拟合公式。均为合成数据，不是真实测量。</p><div id="demo-options" class="demo-options"></div></dialog>
   <dialog id="help-dialog" class="modal help-modal"><div class="modal-heading"><h2>让数据告诉你更多</h2><button class="icon-button" data-close aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><div class="help-content"><h3>1. 导入与核对</h3><p>导入 CSV / TXT / TSV、粘贴表格，或在数据表中手动录入。XLS / XLSX 请先另存为 CSV。空单元格、非数值与列数不符的行会跳过并提示。</p><h3>2. 选择公式</h3><p>支持线性、2–5 次多项式、指数、对数、幂函数和倒数模型。对数要求 X > 0；指数要求 Y > 0；幂函数要求 X、Y > 0；倒数要求 X ≠ 0。</p><p>指数与幂函数通过对 ln(Y) 做最小二乘得到结果，R² 和残差标准偏差按原始 Y 计算。3σ 以线性残差为依据，IQR 基于 Y 值；异常标记需要结合实验判断。</p><h3>3. 带走你的成果</h3><p>导出 SVG 或 PNG 图表、CSV 原始数据与残差、HTML 报告，或使用浏览器打印保存 PDF。可以输入 X 预测 Y，并用残差图检查拟合趋势。报告包含全部数据；请补充实验条件与结论。R² 和残差不能替代测量不确定度分析。</p><h3>本地数据与隐私</h3><p>表格、计算和报告在当前浏览器中处理，使用 localStorage 保存当前会话。网页没有数据上传接口。清除浏览器数据、使用隐私模式或换设备可能丢失记录，请及时导出 CSV。网页不包含 iOS 版的相机 OCR。</p><p>使用手机浏览器的“添加到主屏幕”可以像 App 一样打开。数据仅保存在当前设备和当前网站地址下。</p></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./app.js?v=5"></script>
+  <script type="module" src="./app.js?v=6"></script>
 </body></html>
