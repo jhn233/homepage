@@ -75,6 +75,25 @@ export function markOutliers(points,method) {
   return points.map((p,i)=>({...p,outlier:flags[i]}));
 }
 
+// Range checks follow each reciprocal branch separately so the pole is never treated as interpolated data.
+export function predictAt(result, points, x) {
+  if (!result || !points.length) throw Error('请先完成有效拟合。');
+  if (!Number.isFinite(x)) throw Error('请输入有限的 X 数值。');
+  if (['logarithmic','power'].includes(result.kind) && x<=0) throw Error('该模型要求 X > 0。');
+  if (result.kind==='reciprocal' && x===0) throw Error('倒数模型要求 X ≠ 0。');
+  const value=result.predict(x);
+  if (!Number.isFinite(value)) throw Error('预测结果超出计算范围，请调整输入或数据单位。');
+  const branch=result.kind==='reciprocal'?points.filter(p=>Math.sign(p.x)===Math.sign(x)):points;
+  const xs=branch.map(p=>p.x);
+  const extrapolated=!xs.length || x<Math.min(...xs) || x>Math.max(...xs);
+  return {x,y:value,extrapolated};
+}
+
+export function residualPoints(result, points) {
+  if (!result) return [];
+  return points.map(p=>({...p,residual:p.y-result.predict(p.x)})).filter(p=>Number.isFinite(p.residual));
+}
+
 function splitDelimited(text, delimiter) {
   const rows=[];let row=[],cell='',quoted=false;
   for(let i=0;i<text.length;i++){

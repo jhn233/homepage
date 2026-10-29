@@ -1,4 +1,4 @@
-import {MODELS,DEMOS,fit,fmt,parseTable,parseNumber,markOutliers,curveSegments} from './engine.js';
+import {MODELS,DEMOS,fit,fmt,parseTable,parseNumber,markOutliers,curveSegments,predictAt,residualPoints} from './engine.js?v=4';
 
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='experimentlab.web.v1', clone=v=>JSON.parse(JSON.stringify(v));
@@ -60,6 +60,34 @@ function chartSVG(width,height){
   const tick=x=>fmt(x,4),grid=Array.from({length:5},(_,i)=>{const x=xmin+(xmax-xmin)*i/4,y=ymin+(ymax-ymin)*i/4;return `<line class="grid" x1="${margin.left}" x2="${width-margin.right}" y1="${Y(y)}" y2="${Y(y)}"/><line class="grid" x1="${X(x)}" x2="${X(x)}" y1="${margin.top}" y2="${margin.top+h}"/><text x="${margin.left-12}" y="${Y(y)+3}" text-anchor="end">${tick(y)}</text><text x="${X(x)}" y="${height-34}" text-anchor="middle">${tick(x)}</text>`;}).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(state.names[state.x])} 与 ${esc(state.names[state.y])} 的散点与拟合曲线"><title>${esc(state.names[state.x])} 与 ${esc(state.names[state.y])}</title><rect width="100%" height="100%" fill="white"/>${grid}<line class="tick" x1="${margin.left}" x2="${width-margin.right}" y1="${margin.top+h}" y2="${margin.top+h}"/>${segments.map(seg=>`<path d="${seg.map((p,i)=>`${i?'L':'M'}${X(p.x).toFixed(2)},${Y(p.y).toFixed(2)}`).join(' ')}" fill="none" stroke="#0071e3" stroke-width="2" stroke-linecap="round"/>`).join('')}${points.map(p=>`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${p.outlier?4:3.7}" fill="${p.outlier?'#d39357':'#1d1d1f'}" stroke="white" stroke-width="1.4"><title>第 ${p.index+1} 行 · X: ${fmt(p.x,10)} / Y: ${fmt(p.y,10)}${p.outlier?' · 异常点':''}</title></circle>`).join('')}<text class="axis-name" x="${margin.left+w/2}" y="${height-7}" text-anchor="middle">${esc(state.names[state.x])}</text><text class="axis-name" transform="translate(17 ${margin.top+h/2}) rotate(-90)" text-anchor="middle">${esc(state.names[state.y])}</text></svg>`;
 }
+function updatePrediction(){
+  const input=$('prediction-x'),value=$('prediction-value'),note=$('prediction-note');
+  value.textContent='—';note.classList.remove('warning');
+  if(!analysis.result){note.textContent='请先完成有效拟合，再输入 X 值。';return;}
+  if(!input.value.trim()){note.textContent='预测基于当前拟合模型，不包含不确定度。';return;}
+  try{
+    const p=predictAt(analysis.result,analysis.used,parseNumber(input.value));value.textContent=fmt(p.y,8);
+    if(p.extrapolated){note.textContent='超出参与拟合数据的观测区间，属于外推，结果需谨慎判断。';note.classList.add('warning');}
+    else note.textContent='位于参与拟合数据的观测区间内；结果不包含不确定度。';
+  }catch(error){note.textContent=error.message;note.classList.add('warning');}
+}
+function residualSVG(points){
+  if(!points.length)return '';
+  const width=Math.max(300,Math.min(680,$('residual-chart').clientWidth||680)),height=240,left=76,right=24,top=24,bottom=50,w=width-left-right,h=height-top-bottom;
+  const xs=points.map(p=>p.x),lo=Math.min(...xs),hi=Math.max(...xs),span=hi-lo;
+  const maxResidual=Math.max(...points.map(p=>Math.abs(p.residual)))||1;
+  if(!Number.isFinite(span)||!Number.isFinite(maxResidual))return '';
+  const X=x=>left+(span?(x-lo)/span:.5)*w,Y=y=>top+h/2-y/maxResidual*h*.42;
+  const grid=[-1,0,1].map(t=>`<line x1="${left}" x2="${width-right}" y1="${Y(t*maxResidual)}" y2="${Y(t*maxResidual)}" class="${t===0?'residual-zero':'residual-grid'}"/><text x="${left-10}" y="${Y(t*maxResidual)+4}" text-anchor="end">${fmt(t*maxResidual,3)}</text>`).join('');
+  const ticks=Array.from({length:5},(_,i)=>{let x=lo+span*i/4;return `<text x="${X(x)}" y="${height-27}" text-anchor="middle">${fmt(x,4)}</text>`;}).join('');
+  return `<svg class="residual-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="参与拟合数据的残差分布图"><title>残差分布：观测值减去拟合值</title>${grid}${ticks}${points.map(p=>`<circle cx="${X(p.x)}" cy="${Y(p.residual)}" r="4"><title>第 ${p.index+1} 行 · X：${fmt(p.x,8)} · 残差：${fmt(p.residual,8)}</title></circle>`).join('')}<text x="${left+w/2}" y="${height-4}" text-anchor="middle">${esc(state.names[state.x])}</text><text transform="translate(16 ${top+h/2}) rotate(-90)" text-anchor="middle">残差（原始 Y 尺度）</text></svg>`;
+}
+function renderDiagnostics(){
+  updatePrediction();const residuals=residualPoints(analysis.result,analysis.used);
+  $('residual-chart').innerHTML=residualSVG(residuals)||'<div class="diagnostics-empty">完成拟合后，这里会显示残差分布。</div>';
+  $('residual-caption').textContent=residuals.length<analysis.used.length&&analysis.result?'部分残差超出计算范围，图中仅显示可计算的参与拟合点。':'仅显示参与拟合的观测点，横线表示残差为零。';
+  document.querySelector('[data-action="export-residuals"]').disabled=!residuals.length;
+}
 function renderResults(){
   const {result:r,error,points,outliers}=analysis;
   const names={linear:'LINEAR REGRESSION',polynomial:'POLYNOMIAL',exponential:'EXPONENTIAL',logarithmic:'LOGARITHMIC',power:'POWER LAW',reciprocal:'RECIPROCAL'};
@@ -77,6 +105,8 @@ function renderResults(){
   if(r&&r.df<=0)notes.push('样本数恰好等于参数个数，无法估计残差标准偏差。');
   $('fit-note').textContent=notes.join('　');$('fit-note').classList.toggle('warning',!r||state.outlier!=='off');
   document.querySelector('[data-action="export-chart"]').disabled=!points.length;
+  document.querySelector('[data-action="export-png"]').disabled=!points.length;
+  renderDiagnostics();
 }
 function renderReport(){
   const r=analysis.result,meta=state.report;
@@ -108,6 +138,22 @@ function exportChart(){
   if(!svg)return toast('当前数据量级无法导出图表，请调整单位。');
   downloadFile(svg,'实验解析-拟合图.svg','image/svg+xml;charset=utf-8');toast('图表已导出为 SVG，可插入文档并保持清晰。');
 }
+function exportPNG(){
+  if(!analysis.points.length)return toast('请先添加数据。');
+  const svg=chartSVG(1200,650).replace('<svg ',`<svg style="font-family:-apple-system,Arial,sans-serif" `).replace('</svg>',`<style>text{fill:#6e6e73;font-size:14px}.axis-name{fill:#424245;font-size:16px}.grid{stroke:#e5e5ea;stroke-width:1;stroke-dasharray:3 5}.tick{stroke:#d2d2d7;stroke-width:1}</style></svg>`);
+  if(!svg)return toast('当前数据量级无法导出图表，请调整单位。');
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'})),image=new Image();
+  image.onload=()=>{try{const canvas=document.createElement('canvas');canvas.width=2400;canvas.height=1300;const ctx=canvas.getContext('2d');if(!ctx)throw Error();ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);canvas.toBlob(blob=>{if(blob){downloadFile(blob,'实验解析-拟合图.png','image/png');toast('PNG 图表已导出。');}else toast('PNG 导出失败，请使用 SVG。');},'image/png');}catch{toast('PNG 导出失败，请使用 SVG。');}finally{URL.revokeObjectURL(url);}};
+  image.onerror=()=>{URL.revokeObjectURL(url);toast('PNG 导出失败，请使用 SVG。');};image.src=url;
+}
+function exportResiduals(){
+  if(!analysis.result)return toast('请先完成有效拟合。');
+  const csv=s=>`"${String(s).replaceAll('"','""')}"`;
+  const residuals=residualPoints(analysis.result,analysis.used);
+  if(!residuals.length)return toast('当前没有可计算的残差。');
+  const rows=residuals.map(p=>[p.index+1,p.x,p.y,analysis.result.predict(p.x),p.residual].join(','));
+  downloadFile('\uFEFF'+[['原始行号',state.names[state.x],state.names[state.y],'拟合值','残差（观测−拟合）'].map(csv).join(','),...rows].join('\r\n'),'实验解析-残差.csv','text/csv;charset=utf-8');toast(residuals.length<analysis.used.length?'部分残差超出计算范围，已导出其余残差。':'已导出参与拟合数据的残差。');
+}
 function exportCSV(){
   const csv=s=>`"${String(s).replaceAll('"','""')}"`;
   downloadFile('\uFEFF'+[state.names.map(csv).join(','),...state.rows.map(r=>r.join(','))].join('\r\n'),'实验解析-原始数据.csv','text/csv;charset=utf-8');toast('原始数据已导出。');
@@ -115,7 +161,7 @@ function exportCSV(){
 async function exportReport(){
   renderReport();
   try{
-    const response=await fetch('./style.css?v=3');if(!response.ok)throw Error();const css=await response.text();
+    const response=await fetch('./style.css?v=4');if(!response.ok)throw Error();const css=await response.text();
     downloadFile(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(state.report.title||'实验报告')}</title><style>${css}\nbody{padding:25px;background:#f5f7f4}.report-paper{max-width:900px;margin:0 auto}@media print{body{padding:0}}</style><article class="report-paper">${$('report-preview').innerHTML}</article></html>`,'实验解析-实验报告.html','text/html;charset=utf-8');toast('报告已下载，打开文件即可阅读或打印成 PDF。');
   }catch{toast('报告样式读取失败，请使用“打印 / 保存 PDF”。');}
 }
@@ -124,7 +170,7 @@ const actions={
   add:()=>{if(state.rows.length>=10000)return toast('最多支持 10,000 行。');remember();const row=Array(state.names.length).fill(0),max=state.rows.length?Math.max(...state.rows.map(r=>r[state.x])):-1;row[state.x]=max+1;state.rows.push(row);state.notice='';update();const container=page==='data'?$('full-table'):$('compact-table');container.scrollTop=container.scrollHeight;const input=container.querySelector(`input[data-cell="${state.rows.length-1},${state.y}"]`);input?.focus();input?.select();},
   undo:()=>{if(!undo.length)return toast('还没有可撤销的操作。');state=undo.pop();update();toast('已撤销上一步。');},
   manual:()=>{replaceDataset({names:['X','Y'],rows:[]},'手动录入');setPage('data');toast('空白数据表已准备好，点击“添加一行”开始。');},
-  'export-chart':exportChart,'export-csv':exportCSV,'export-report':exportReport,
+  'export-chart':exportChart,'export-png':exportPNG,'export-residuals':exportResiduals,'export-csv':exportCSV,'export-report':exportReport,
   print:()=>{if(!state.rows.length)return toast('请先添加数据。');setPage('report');renderReport();window.print();}
 };
 document.addEventListener('click',e=>{
@@ -168,6 +214,7 @@ for(const axis of ['x','y'])$(axis+'-column').addEventListener('change',e=>{reme
 $('outlier-method').addEventListener('change',e=>{remember();state.outlier=e.target.value;update();});
 $('degree').addEventListener('change',e=>{remember();state.degree=Number(e.target.value);update();});
 for(const key of ['title','author','date','context','discussion'])$('report-'+key).addEventListener('input',e=>{state.report[key]=e.target.value;clearTimeout(reportTimer);reportTimer=setTimeout(renderReport,180);persist();});
+$('prediction-x').addEventListener('input',updatePrediction);
 $('paste-form').addEventListener('submit',e=>{e.preventDefault();try{const data=parseTable($('paste-input').value);replaceDataset(data,'粘贴数据');$('paste-dialog').close();$('paste-input').value='';toast(`已导入 ${data.rows.length} 行${data.skipped?`，跳过 ${data.skipped} 行`:''}。`);}catch(error){$('paste-error').textContent=error.message;}});
 $('file-input').addEventListener('change',async e=>{
   const file=e.target.files?.[0];if(!file)return;
